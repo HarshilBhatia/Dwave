@@ -11,15 +11,25 @@ s = pd.read_excel('covariance1.xlsx')
 returns = r['Return']
 #print(returns)
 sigma = s.loc[:,s.columns!='INDEX'];
-sigma = sigma*100*100;
-returns = returns*100;
+#sigma = sigma*100*100;
+#eturns = returns*100;
 sigma = sigma.to_numpy();
+
+"""
+for i in range(25):
+    for j in range(25):
+        sigma[i][j]=100000000;
+
+sigma[0][0]=1;
+sigma[1][1]=1;
+"""
+
 
 import localsolver
 
 with localsolver.LocalSolver() as ls:
     # Declares the optimization model
-    model = ls.model
+    model = ls.model    
 
     N = 25;
     n =12;
@@ -31,12 +41,11 @@ with localsolver.LocalSolver() as ls:
     min_sigx = 0;
 
     for i in range(N):
-        min_sigx+=x[i]*sigma[i][i]
-
-    for i in range(N):
-        for j in range(i+1,N):
+        for j in range(N):
             min_sigx += x[i]*x[j]*sigma[i][j];
-    
+        
+
+
     #summation xi
     xi =0 ;
     for i in x:
@@ -72,7 +81,8 @@ with localsolver.LocalSolver() as ls:
     #print(ls.solution.get_value(xi))
     print()
     s = 0;
+    
     for i in range(N):
         if(x[i].value==1):
-            s += returns[i]
             print(i)
+    

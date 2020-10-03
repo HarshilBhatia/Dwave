@@ -10,12 +10,11 @@ import pandas as pd
 
 r = pd.read_excel('Returns.xlsx')
 s = pd.read_excel('covariance1.xlsx')
-
+#print(r)
 returns = r['Return']
 #print(returns)
 sigma = s.loc[:,s.columns!='INDEX'];
-sigma = sigma*100*100;
-returns = returns*100;
+
 sigma = sigma.to_numpy();
 
 # Create a new model
@@ -23,7 +22,7 @@ m = gp.Model("qp")
 
 
 N=25;
-n=2;
+n=12;
 
 # Create variables
 x = m.addMVar(N , vtype=gp.GRB.BINARY, name="x")
@@ -37,9 +36,7 @@ x = m.addMVar(N , vtype=gp.GRB.BINARY, name="x")
 min_sigx = 0;
 
 for i in range(N):
-    min_sigx+=x[i]*sigma[i][i]
-for i in range(N):
-    for j in range(i+1,N):
+    for j in range(N):
         min_sigx += x[i]@x[j]*sigma[i][j];
 
 m.setObjective(min_sigx)
@@ -48,7 +45,7 @@ for i in x:
     xi+=i;
 m.addConstr(xi == n, "c0")
 
-R =  100;
+R =  450;
     # Initilize Expected Return to 0 for now . 
 
     # myu * x 
