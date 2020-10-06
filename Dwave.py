@@ -74,7 +74,7 @@ for i in range(N):
 for i in range (1,2):
     sl = 0;
     lambda1 = (mx-mn);
-    lambda1 *= 10;
+    lambda1 *= 1;
     #print(lambda1)
     lambda2 = 1;
     #mul = 20;
@@ -129,7 +129,7 @@ for i in range (1,2):
         ret = 0;
         for i in range(N):
             ret += sample['arr[{}]'.format(i)] *returns[i];
-        #print(final_sigx,n_temp)
+        print(final_sigx,n_temp)
 
         if(final_sigx<mn and n_temp == n ):
             mn=final_sigx;
@@ -142,7 +142,7 @@ for i in range (1,2):
         '''
         
    # print(x)
-    #print 'best - optimal' solution obtained
+    #print 'best - optimal' solution
     for i in range(N):
         if(x['arr[{}]'.format(i)]==1):
             print(i)
