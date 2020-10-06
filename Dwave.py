@@ -15,14 +15,15 @@ sigma = s.loc[:,s.columns!='INDEX'];
 sigma = sigma.to_numpy();
 
 
-
 N = 15;
-n = 8;
-mx = 0;
-for i in returns:
-    mx=max(i,mx)
+n = 7;
+R = 300 ; # Initilize Expected Return to 0 for now . 
 
-K = math.log2(mx-1);
+sum=0;
+for i in range(N):
+    sum += returns[i];
+
+K = math.log2(sum-1);
 K = math.floor(K);
 K+=1;
 #print(returns)
@@ -50,7 +51,6 @@ H = H**2;
 #print(x)
 select_n = Constraint(H , label = "select_n_projects")
 #print(select_n)
-R = 220 ; # Initilize Expected Return to 0 for now . 
 
 H = 0; #temp hamiltonian for the Constraint
 for i in range(N):
@@ -64,7 +64,7 @@ for i in range(0,K):
 H = H**2;
 
 expR = Constraint(H, label = "min_expected_return");
-
+numreads= 10000;
 mx=0;
 mn=1e9;
 for i in range(N):
@@ -74,12 +74,13 @@ for i in range(N):
 for i in range (1,2):
     sl = 0;
     lambda1 = (mx-mn);
-    lambda1 *= 1;
+    lambda1 *= 10;
+    lambda1 = int(lambda1)
     #print(lambda1)
-    lambda2 = 1;
+    lambda2 = 10;
     #mul = 20;
     H = min_sigx + lambda1*select_n + lambda2*expR;
-
+    print(R,N,n,numreads,lambda1,lambda2);
     model = H.compile();
     qubo, offset = model.to_qubo()
 
@@ -95,7 +96,7 @@ for i in range (1,2):
         response = sampler.sample_qubo(qubo, chain_strength=Cs, num_reads =1000) #solver=DWaveSampler()) #, num_reads=50)
     else:
         sampler = neal.SimulatedAnnealingSampler()
-        response = sampler.sample_qubo(qubo, num_sweeps=10000, num_reads=1000)
+        response = sampler.sample_qubo(qubo, num_sweeps=10000, num_reads=numreads)
 
     #sample = response.first.sample
     
@@ -131,7 +132,7 @@ for i in range (1,2):
             ret += sample['arr[{}]'.format(i)] *returns[i];
         print(final_sigx,n_temp)
 
-        if(final_sigx<mn and n_temp == n ):
+        if(final_sigx<mn and n_temp == n and ret>=R):
             mn=final_sigx;
             x = sample;
             final_ret = ret;
@@ -142,13 +143,12 @@ for i in range (1,2):
         '''
         
    # print(x)
-    #print 'best - optimal' solution
+    """
     for i in range(N):
         if(x['arr[{}]'.format(i)]==1):
             print(i)
 
     print(mn)
     print(final_ret)
-    
-    
+    """
         #Sum(0, K, lambda i: var[N + j*K +i]*(2**(i))) - v[j])**2
