@@ -151,4 +151,4 @@ for i in range (1,2):
     print(mn)
     print(final_ret)
     """
-        #Sum(0, K, lambda i: var[N + j*K +i]*(2**(i))) - v[j])**2
+        #Sum(0, K, lambda i: var[N + j*K +i]*(2**(i))) - v[j])**2 
