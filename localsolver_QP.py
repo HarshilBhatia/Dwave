@@ -1,37 +1,32 @@
 import numpy as np
 import pandas as pd
-#import pyomo 
-
-
 # getting values of Returns and Sigma 
 
-r = pd.read_excel('returnsall.xlsx')
-s = pd.read_excel('covariances.xlsx')
+r = pd.read_excel('ret.xlsx')
+s = pd.read_excel('corr.xlsx')
 
-returns = r['Return']
+returns = r['return']
 #print(returns)
-sigma = s.loc[:,s.columns!='INDEX'];
-#sigma = sigma*100*100;
-#eturns = returns*100;  
+sigma = s.loc[:,s.columns!='STOCK'];
 sigma = sigma.to_numpy();
-returns = abs(returns);
+returns = returns
 
-sigma = (sigma).astype(int);
-returns =(returns*1).astype(int);
+sigma = ((sigma*1000).astype(int));
+returns = ((returns*100).astype(int));
 
+N = 100;
+n = 50;
+R = 2500;
 
-# print(returns.shape)
-# print(sigma.shape)
+print("N = {} n= {} R = {}".format(N,n,R));
 
 import localsolver
+
 
 with localsolver.LocalSolver() as ls:
     # Declares the optimization model
     model = ls.model    
-    #updated the code.
-    N = 25;
-    n = 5;
-    R = 0;
+
     x = [model.bool() for i in range(N)]
 
     # weight constraint
@@ -68,20 +63,6 @@ with localsolver.LocalSolver() as ls:
     ls.param.time_limit = 10
 
     ls.solve()
-# ls.solution.get_value(x)
-    #print(min_sigx)
-    #print(ls.solution.get_objective_bound(1))
-    #print(ls.solution.get_objective_bound(2))
     
-    print();
-    print("x'Sx = ", ls.solution.get_value(min_sigx))
-    print("Returns = ",ls.solution.get_value(ret))
-    
-    #print(ls.solution.get_value(xi))
-    print()
-    s = 0;
-    
-    for i in range(N):
-        if(x[i].value==1):
-            print(i)
-    
+    print("x'Sx = ", ls.solution.get_value(min_sigx),"Returns = ",ls.solution.get_value(ret))
+       
